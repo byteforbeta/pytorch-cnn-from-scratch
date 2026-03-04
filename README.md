@@ -40,7 +40,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## 🧠 Training the Model
+## Training the Model
 
 All hyperparameters (learning rate, batch size, optimizer, etc.) are decoupled from the core code. You can easily modify them in `src/config.yaml`.
 
@@ -50,7 +50,7 @@ python src/train.py
 ```
 *Note: The script automatically detects and utilizes NVIDIA GPUs (CUDA) if available, falling back to CPU if necessary.*
 
-## 🌐 Running the Inference API
+## Running the Inference API
 
 Once the model is trained and the `.pth` weights are saved in `saved_models/`, you can spin up the FastAPI server to run predictions on new images.
 
@@ -62,6 +62,6 @@ uvicorn src.app:app --reload
 2. **Test the Endpoint:**
 Open your browser and navigate to `http://127.0.0.1:8000/docs`. You can use the built-in Swagger UI to upload an image of a clothing item directly to the `/predict` endpoint and receive a JSON response with the model's prediction and confidence score.
 
-## 📊 Results
+## Results
 * **Training Loss:** ~0.163
 * **Test Accuracy:** 92.66%
