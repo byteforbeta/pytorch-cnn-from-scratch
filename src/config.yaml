@@ -17,3 +17,8 @@ model:
 system:
   random_seed: 42
   num_workers: 2
+
+wandb:
+  project: "fashion-mnist-cnn"
+  entity: "[user name]" 
+  enabled: true

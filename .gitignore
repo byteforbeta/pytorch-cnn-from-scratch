@@ -5,6 +5,7 @@
 # unnecessary - data
 notebooks/
 data/
+wandb/
 # saved_models/
 
 # Python cache

@@ -11,6 +11,7 @@ from dataset import dataprep
 import yaml, os
 import random
 import numpy as np
+import wandb
 
 def set_seed(seed_value=42):
     """Sets the seed for reproducibility across the entire pipeline."""
@@ -27,8 +28,6 @@ if __name__ == '__main__':
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     cwd = os.getcwd()
     print(f"Current Working Directory: {cwd}")
-
-
 
     with open(cwd+r"\src\config.yaml",'r') as cf:
         data = yaml.load(cf, Loader=yaml.SafeLoader)
@@ -55,6 +54,10 @@ if __name__ == '__main__':
     epochs = data['training']['num_epochs']
     dataloader = DataLoader(train_set, batch_size=data['training']['batch_size'], shuffle=True, num_workers=data['system']['num_workers'])
 
+    # Initialize W&B
+    if data['wandb']['enabled']:
+        wandb.init(project=data['wandb']['project'],config=data)
+
     print("Status: Starting Epoch Loop......................")
     for epoch in range(epochs):
         total_loss = 0
@@ -71,12 +74,26 @@ if __name__ == '__main__':
 
         avg_loss = total_loss/len(dataloader)
         print(f"epoch: {epoch+1}/{epochs} | avg_loss: {avg_loss}")
+        
+        if data['wandb']['enabled']:
+            wandb.log({
+                "epoch": epoch + 1,
+                "train_loss": avg_loss,
+            })
 
     print("Status: Model Training Completed and Preparing for model evaluation!")
 
     final_accuracy = eval_model(model, test_set, device)
 
+    if config['wandb']['enabled']:
+        wandb.log({"test_accuracy": final_accuracy})
+
 
     # Save the learned weights
     torch.save(model.state_dict(), data['paths']['checkpoint_dir']+'/custom_cnn.pth')
     print(f"Model weights saved successfully - {final_accuracy} !")
+    if data['wandb']['enabled']:
+        artifact = wandb.Artifact("custom_cnn", type="model")
+        artifact.add_file(data['paths']['checkpoint_dir']+'/custom_cnn.pth')
+        wandb.log_artifact(artifact)
+        wandb.finish()
