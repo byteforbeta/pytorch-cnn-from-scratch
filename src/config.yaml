@@ -1,0 +1,19 @@
+training:
+  batch_size: 128
+  learning_rate: 0.001
+  num_epochs: 20
+  optimizer: "adam" # Options: [adam/sgd]
+
+paths:
+  data_dir: "./data"
+  checkpoint_dir: "./saved_models"
+
+model:
+  in_channels: 1
+  fc_hidden_size: 128
+  num_classes: 10 # 10 Classes for the dataset used in the project
+  dropout_rate: 0.5
+
+system:
+  random_seed: 42
+  num_workers: 2
